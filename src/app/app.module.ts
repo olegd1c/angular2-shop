@@ -17,6 +17,7 @@ import { SearchComponent } from './components/search/search.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ProductService } from './services/product-service';
 import { StarComponent } from './components/star/star.component';
+import { ProductCartComponent } from './components/product-cart/product-cart.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { StarComponent } from './components/star/star.component';
     ProductItemComponent,
     SearchComponent,
     NavbarComponent,
-    StarComponent    
+    StarComponent,
+    ProductCartComponent    
   ],
   imports: [
     BrowserModule,

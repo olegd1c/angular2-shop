@@ -1,31 +1,23 @@
 import {Injectable} from '@angular/core';
-
-export class Product {
-  constructor(
-    public id: number,
-    public title: string,
-    public price: number,
-    public rating: number,
-    public description: string,
-    public categories: string[]) {
-  }
-}
-
-export class Review {
-  constructor(
-    public id: number,
-    public productId: number,
-    public timestamp: Date,
-    public user: string,
-    public rating: number,
-    public comment: string) {
-  }
-}
+import { Product, Review, ProductCart, Cart} from '../app-model';
 
 @Injectable()
 export class ProductService {
+//  let productCarts: ProductCarts[];
+// let product: Product;
+//public cart: Cart;
+
+ // constructor(@Inject(Cart) public cart: Cart) {
+ //   this.cart = new Cart();
+//	}
+
   getProducts(): Product[] {
     return products.map(p => new Product(p.id, p.title, p.price, p.rating, p.description, p.categories));
+  }
+
+  getProductCarts(): ProductCart[] 
+  {
+    return [];
   }
 
   getProductById(productId: number): Product {
@@ -41,7 +33,7 @@ export class ProductService {
   getAllCategories(): string[] {
     return ['Books', 'Electronics', 'Hardware'];
   }
-}
+} 
 
 var products = [
   {
