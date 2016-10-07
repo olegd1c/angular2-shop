@@ -1,5 +1,10 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import { Product, Review, ProductCart, Cart} from '../app-model';
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import {Observable}               from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
 
 @Injectable()
 export class ProductService {
@@ -7,17 +12,27 @@ export class ProductService {
 // let product: Product;
 //public cart: Cart;
 
- // constructor(@Inject(Cart) public cart: Cart) {
- //   this.cart = new Cart();
-//	}
+   private apiUrl = 'api/home';
+
+    constructor(private _http: Http) {
+      console.log('ProductService constructor');      
+    }
+
+  ngOnInit() {
+    console.log('ProductService ngOnInit'); 
+  }
 
   getProducts(): Product[] {
     return products.map(p => new Product(p.id, p.title, p.price, p.rating, p.description, p.categories));
   }
 
-  getProductCarts(): ProductCart[] 
-  {
-    return [];
+  getProductCarts(): Promise<Product[]> 
+  {      
+      return this._http.get(this.apiUrl)
+                        .toPromise()
+                        .then(res => res.json().data)
+                        .catch(this.handleError);
+    //return [];
   }
 
   getProductById(productId: number): Product {
@@ -33,6 +48,55 @@ export class ProductService {
   getAllCategories(): string[] {
     return ['Books', 'Electronics', 'Hardware'];
   }
+
+  private handleError(error: any): Promise<any> {
+        console.log('Произошла ошибка', error);
+        return Promise.reject(error.message || error);
+    }  
+
+  addProduct(product: Product): Promise<Product> {
+        return this.post(product);
+    }
+
+  deleteProduct(product: Product): Promise<Product> {
+        return this.delete(product);
+    }    
+
+  private post(product: Product): Promise<Product> {
+        let body = JSON.stringify(product);
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers });
+
+        return this._http.post(this.apiUrl, body, options)
+                        .toPromise()
+                        .then(res => res.json().data)
+                        .catch(this.handleError)
+    }
+
+    private put(product: Product): Promise<Product> {
+        let body = JSON.stringify(product);
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers });
+
+        let url = `${this.apiUrl}/${product.id}`;
+
+        return this._http.put(url, body, options)
+                        .toPromise()
+                        .then(res => product)
+                        .catch(this.handleError);
+    }
+
+    private delete(product: Product): Promise<Product> {
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers });
+
+        let url = `${this.apiUrl}/${product.id}`;
+
+        return this._http.delete(url, options)
+                        .toPromise()
+                        .then(res => product)
+                        .catch(this.handleError);
+    }    
 } 
 
 var products = [

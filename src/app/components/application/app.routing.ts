@@ -1,12 +1,13 @@
 import { ModuleWithProviders } from '@angular/core';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
+import { Input, Output, EventEmitter} from '@angular/core';
 import { CartComponent } from '../cart/cart.component';
 import { ContactComponent } from '../contact/contact.component';
 import { HomeComponent } from '../home/home.component';
 import { ProductDetailComponent } from '../product-detail/product-detail.component';
 import { ProductItemComponent } from '../product-item/product-item.component';
+import { Product } from '../../app-model';
 
 const routes: Routes = [
  { path: '', component: HomeComponent }
@@ -21,7 +22,9 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: []
 })
-export class Angular2ShopRoutingModule { }
+export class Angular2ShopRoutingModule {   
+
+ }
 
 export const appRoutingProviders: any[] = [
 

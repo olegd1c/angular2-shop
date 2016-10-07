@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import {ProductCart} from '../../app-model';
+import { Component, OnInit } from '@angular/core';
+import {ProductCart,Product} from '../../app-model';
 import { ProductService} from '../../services/product-service';
 
 @Component({
@@ -9,12 +9,12 @@ import { ProductService} from '../../services/product-service';
 })
 export class AppComponent {
   title = 'app works!';
-  //productsCart: ProductCart[] = [];
   
-  constructor(private productService: ProductService) {
-    //this.products.push() = this.productService.getProducts();
-    //this.productsCart.push(new ProductCart(1,"first",10,2));
-    //this.productsCart.push(new ProductCart(2,"second",15,6));   
+  constructor(private productService: ProductService) {   
+    console.log('app constructor');  
   }
-
+         
+  ngOnInit() {
+    console.log('home ngOnInit');  
+  }
 }

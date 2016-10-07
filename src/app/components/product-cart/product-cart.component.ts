@@ -1,5 +1,5 @@
 import { Component, OnInit, Input} from '@angular/core';
-import {ProductCart} from '../../app-model';
+import {ProductCart,Product} from '../../app-model';
 
 @Component({
   selector: 'app-product-cart',
@@ -7,7 +7,7 @@ import {ProductCart} from '../../app-model';
   styleUrls: ['./product-cart.component.css']
 })
 export class ProductCartComponent implements OnInit {
-  @Input() product: ProductCart;
+  @Input() product: Product;
 
   constructor() { }
 
