@@ -25,6 +25,7 @@ export class ProductItemComponent implements OnInit {
     }
 
    deleteCart() {
+        console.log('product delete prod');
         this.deletedCart.emit(this.product);
     }  
 }

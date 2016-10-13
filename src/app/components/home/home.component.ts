@@ -39,21 +39,16 @@ export class HomeComponent implements OnInit {
     }
 
     onProductDeleted(product: Product): void {
-        //this.productService.deleteProduct(product).then(product => this.deleteCart(product));
+        this.deleteCart(product);
     }    
 
     private addCart(product: Product): void {
-        console.log('home addCart 2');
-        this.productsCart.push(product);
-        console.log('productsCart.length '+this.productsCart.length);
+        this.productService.addProductToCart(product);
     }
 
     private deleteCart(product: Product): void {
-        let index = this.productsCart.indexOf(product);
-
-        if (index > -1) {
-            this.productsCart.splice(index, 1);
-        }
+        console.log('delete prod');   
+        this.productService.deleteProductCart(product.id);            
     } 
 
 }

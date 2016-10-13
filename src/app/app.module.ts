@@ -18,6 +18,11 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { ProductService } from './services/product-service';
 import { StarComponent } from './components/star/star.component';
 import { ProductCartComponent } from './components/product-cart/product-cart.component';
+import { AuthComponent } from './components/auth/auth.component';
+import { Auth } from './components/auth/auth.service';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ProfileEdit } from './components/profile-edit/profile_edit.component';
+import { ProfileShow } from './components/profile-show/profile_show.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +36,11 @@ import { ProductCartComponent } from './components/product-cart/product-cart.com
     SearchComponent,
     NavbarComponent,
     StarComponent,
-    ProductCartComponent    
+    ProductCartComponent,
+    AuthComponent,
+    ProfileComponent,
+    ProfileEdit,
+    ProfileShow    
   ],
   imports: [
     BrowserModule,
@@ -39,7 +48,15 @@ import { ProductCartComponent } from './components/product-cart/product-cart.com
     HttpModule,
     routing    
   ],
-  providers: [appRoutingProviders,ProductService],
+  providers: [appRoutingProviders,ProductService,Auth],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+/*
+bootstrap(AppComponent, [
+    HTTP_PROVIDERS,
+    { provide: XHRBackend, useClass: InMemoryBackendService },
+    { provide: SEED_DATA, useClass: TodoSeedData },
+]);
+*/

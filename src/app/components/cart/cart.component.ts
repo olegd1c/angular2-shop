@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { ProductService} from '../../services/product-service';
 import { ProductCart,Product } from '../../app-model';
 
@@ -10,17 +10,31 @@ import { ProductCart,Product } from '../../app-model';
 
 export class CartComponent implements OnInit {
 
-  productsCart: Product[];
-  //productsCart: ProductCart[] = [];
+  productsCart: ProductCart[];
 
   constructor(private productService: ProductService) {
-    this.productsCart = new Array<Product>();
-    //this.products.push() = this.productService.getProducts();
-    //this.productsCart.push(new ProductCart(1,"first",10,2));
-    //this.productsCart.push(new ProductCart(2,"second",15,6));   
+    this.productsCart = new Array<ProductCart>();
   }
 
   ngOnInit() {
-    this.productService.getProductCarts().then(productsCart => this.productsCart = productsCart);
+    this.productsCart = this.productService.getProductsCart();
   }
+
+  onProductAdded(product: ProductCart): void {
+        this.addCart(product);
+    }
+
+    onProductDeleted(product: ProductCart): void {
+        this.deleteCart(product);
+    }    
+
+    private addCart(product: ProductCart): void {
+        this.productService.addProductCart(product);
+        this.productsCart = this.productService.getProductsCart();
+    }
+
+    private deleteCart(product: ProductCart): void {   
+        this.productService.deleteProductCart(product.id);        
+        this.productsCart = this.productService.getProductsCart();    
+    }   
 }

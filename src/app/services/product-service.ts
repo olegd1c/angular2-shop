@@ -12,7 +12,8 @@ export class ProductService {
 // let product: Product;
 //public cart: Cart;
 
-   private apiUrl = 'api/home';
+   private apiUrl = 'api/todos';
+   private productsCart : ProductCart[];
 
     constructor(private _http: Http) {
       console.log('ProductService constructor');      
@@ -26,15 +27,104 @@ export class ProductService {
     return products.map(p => new Product(p.id, p.title, p.price, p.rating, p.description, p.categories));
   }
 
-  getProductCarts(): Promise<Product[]> 
-  {      
-      return this._http.get(this.apiUrl)
-                        .toPromise()
-                        .then(res => res.json().data)
-                        .catch(this.handleError);
-    //return [];
+  getProductsCart(): ProductCart[] 
+  {     
+      return JSON.parse(localStorage.getItem('productsCart'));
   }
 
+  setProductCarts(productsCart: ProductCart[]) 
+  {     
+      localStorage.setItem('productsCart',JSON.stringify(productsCart));
+  } 
+
+  addProductCart(productCart: ProductCart) 
+  {     
+      let indexP : number = this.findProductCart(productCart.id);
+      this.productsCart = this.getProductsCart();
+      if (indexP >= 0) {                
+        let prodCart = this.productsCart[indexP];
+        
+        console.log('addProductCart sum');
+        console.log(prodCart);  
+        let newCount = prodCart.count+1;  
+        
+        //prodCart.setCount(newCount);
+        prodCart.count = newCount;
+        prodCart.sum = prodCart.count*prodCart.price;
+
+        this.productsCart[indexP] = prodCart; 
+
+        this.setProductCarts(this.productsCart);                
+      } 
+
+      //else{        
+      //  this.productsCart.push(productCart);
+      //}
+      
+       
+  } 
+
+  addProductToCart(product: Product) 
+  {     
+      let indexP : number = this.findProductCart(product.id);
+      this.productsCart = this.getProductsCart();
+      if (indexP >= 0) {
+        let prodCart = this.productsCart[indexP];
+        console.log('addProductToCart sum');
+        console.log(prodCart);      
+        let newCount = prodCart.count+1;   
+        
+        //prodCart.setCount(newCount);
+        this.setCountProduct(prodCart,newCount);
+        this.productsCart[indexP] = prodCart; 
+        this.setProductCarts(this.productsCart); 
+
+      } 
+      else{
+        this.productsCart = this.getProductsCart();
+        
+        console.log('addProductToCart else');
+        console.log(product);   
+
+        this.productsCart.push(new ProductCart(product,1));
+        this.setProductCarts(this.productsCart);         
+      }
+      
+      this.setProductCarts(this.productsCart); 
+  }  
+
+  public setCountProduct(product: ProductCart,countP: number){
+      product.count = countP;
+      product.sum = product.count*product.price;
+    }       
+
+  deleteProductCart(id: number) 
+  {   
+      console.log('ProductService deleteProductsCart');          
+      //console.log('ProductService products '+this.productsCart.length); 
+
+      let indexP : number = this.findProductCart(id);
+  
+          if (indexP >= 0){
+              this.productsCart = this.getProductsCart();            
+              this.productsCart.splice(indexP,1);
+              this.setProductCarts(this.productsCart);
+              //break;  
+          }      
+  }  
+
+  findProductCart( idP : number) : number{
+      let indexP: number = -1;
+      this.productsCart = this.getProductsCart();
+      for (var i = 0; i < (this.productsCart.length); i++){        
+                if (this.productsCart[i].id == idP){
+                    indexP = i;
+                    break;  
+                }
+            }
+    return indexP;            
+  }
+   
   getProductById(productId: number): Product {
     return products.find(p => p.id === productId);
   }

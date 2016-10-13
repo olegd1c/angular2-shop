@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ProductCart,Product} from '../../app-model';
 import { ProductService} from '../../services/product-service';
+import { Auth }              from '../auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +11,7 @@ import { ProductService} from '../../services/product-service';
 export class AppComponent {
   title = 'app works!';
   
-  constructor(private productService: ProductService) {   
+  constructor(private productService: ProductService, private auth: Auth) {   
     console.log('app constructor');  
   }
          

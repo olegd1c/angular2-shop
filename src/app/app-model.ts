@@ -3,7 +3,7 @@ export class Product {
   constructor(
     public id: number,
     public title: string,
-    public price: number,
+    public price: number = 0,
     public rating: number,
     public description: string,
     public categories: string[]) {
@@ -11,11 +11,39 @@ export class Product {
 }
 
 export class ProductCart {
-  constructor(public productId: number,
-    public title: string,
-    public price: number,
-    public count: number
-    ) {}
+    public id: number;
+    public title: string;
+    public price: number = 0;
+    public rating: number;
+    public description: string;
+    public categories: string[];
+    public count: number = 0;
+    public sum: number = 0;
+
+  constructor(public product: Product,
+      private countP: number
+    ) {    
+    this.id = product.id;
+    this.title = product.title;
+    this.rating = product.rating;
+    this.description = product.description;
+    this.categories = product.categories;
+    
+    this.setPrice(product.price);
+    this.setCount(countP);
+
+    }    
+
+    public setPrice(priceP: number){
+      this.price = priceP;
+      this.sum = this.price * this.count;
+    }
+
+    public setCount(countP: number){
+      this.count = countP;
+      this.sum = this.price * this.count;
+      console.log('sum = ' + this.sum);
+    }    
 }
 
 export class Cart {

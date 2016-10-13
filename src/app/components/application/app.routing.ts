@@ -8,13 +8,15 @@ import { HomeComponent } from '../home/home.component';
 import { ProductDetailComponent } from '../product-detail/product-detail.component';
 import { ProductItemComponent } from '../product-item/product-item.component';
 import { Product } from '../../app-model';
-
+import { ProfileRoutes }               from '../profile/profile.routes';
 const routes: Routes = [
  { path: '', component: HomeComponent }
  ,{ path: 'contact', component: ContactComponent }
  ,{ path: 'cart', component: CartComponent }
  ,{path: 'products/:productId', component: ProductDetailComponent}
- ,{path: 'product', component: ProductItemComponent}
+ ,{path: 'product', component: ProductItemComponent},
+ ...ProfileRoutes,
+ { path: '**', redirectTo: '' }
 ];
  
 @NgModule({
