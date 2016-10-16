@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import { ProductService} from '../../services/product-service';
 import { Angular2ShopRoutingModule} from '../application/app.routing';
+import {Observable}               from 'rxjs/Observable';
 //import { SessionStorage } from '@angular/WebStorage'
 
-import {Product} from '../../app-model';
+import {Product,IProduct} from '../../app-model';
 
 @Component({
   selector: 'app-home',
@@ -16,12 +17,13 @@ export class HomeComponent implements OnInit {
   //@Output() deletedCart: EventEmitter<Product>;
 
   products: Product[] = [];
-
+//products: Observable<Product[]>;
+    //products: Promse<Product[]>;
   //@SessionStored
   productsCart: Product[] = new Array<Product>();
 
   constructor(private productService: ProductService) {
-    this.products = this.productService.getProducts();
+    //this.products = this.productService.getProducts();
     //this.productsCart = new Array<Product>();
     //this.addedCart = new EventEmitter<Product>();
     //this.deletedCart = new EventEmitter<Product>();  
@@ -29,7 +31,15 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('home ngOnInit');  
+    console.log('home ngOnInit');
+      this.productService.getProductsP().then(products => {
+          console.log('home ngOnInit promise');
+          console.log(products);
+          //console.log(JSON.parse(products));
+          this.products = products
+      });
+
+      console.log('home ngOnInit end');
   }
 
   onProductAdded(product: Product): void {

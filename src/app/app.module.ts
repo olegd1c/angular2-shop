@@ -1,8 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
-
+import { HttpModule, JsonpModule } from '@angular/http';
 import { routing,
          appRoutingProviders }  from './components/application/app.routing';
 
@@ -46,6 +45,7 @@ import { ProfileShow } from './components/profile-show/profile_show.component';
     BrowserModule,
     FormsModule,
     HttpModule,
+    JsonpModule,
     routing    
   ],
   providers: [appRoutingProviders,ProductService,Auth],

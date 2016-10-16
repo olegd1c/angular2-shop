@@ -1,10 +1,14 @@
 import {Injectable, OnInit} from '@angular/core';
-import { Product, Review, ProductCart, Cart} from '../app-model';
+import { Product, Review, ProductCart, Cart,IProduct} from '../app-model';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import {Observable}               from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+//import {Observable} from 'rxjs/Rx';
+// Import RxJs required methods
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/catch';
+
 
 @Injectable()
 export class ProductService {
@@ -12,20 +16,57 @@ export class ProductService {
 // let product: Product;
 //public cart: Cart;
 
-   private apiUrl = 'api/todos';
-   private productsCart : ProductCart[];
+   //private apiUrl = 'php/';
+    private apiUrl = 'php/';
+    //
+   //private apiUrl = "http://angular2-shop.devapp.in.ua/php/";//get_products.php
+   private apiUrlProduct = this.apiUrl+"get_products.php";
 
+   private productsCart : ProductCart[];
+    _headers:  Headers;
     constructor(private _http: Http) {
-      console.log('ProductService constructor');      
+      console.log('ProductService constructor');
+
+        this._http = _http;
+        this._headers = new Headers();
+        this._headers.append('Content-Type', 'application/json');
+        this._headers.append('Access-Control-Allow-Origin', '*');
+        this._headers.append("Access-Control-Allow-Origin", "http://localhost:4200");
+        this._headers.append('Access-Control-Allow-Headers', 'Content-Type');
+        this._headers.append('Access-Control-Allow-Methods', 'GET');
+
     }
 
   ngOnInit() {
     console.log('ProductService ngOnInit'); 
   }
 
-  getProducts(): Product[] {
+
+    getProductsP(): Promise<Product[]> {
+        return this._http.get(this.apiUrlProduct)
+            .toPromise()
+            .then(res => {
+                    console.log(res.json()['products']);
+                    //console.log(res.json().data);
+                    return res.json()['products']
+                }
+                )
+            .catch(this.handleError);
+    }
+
+  getProducts1(): Product[] {
     return products.map(p => new Product(p.id, p.title, p.price, p.rating, p.description, p.categories));
   }
+
+  getProducts2() : Observable<Product[]> {
+
+        // ...using get request
+        return this._http.get(this.apiUrlProduct)
+            // ...and calling .json() on the response to return data
+            .map((res:Response) => res.json());
+            //...errors if any
+            //.catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+    }
 
   getProductsCart(): ProductCart[] 
   {     
@@ -186,7 +227,8 @@ export class ProductService {
                         .toPromise()
                         .then(res => product)
                         .catch(this.handleError);
-    }    
+    }
+
 } 
 
 var products = [
