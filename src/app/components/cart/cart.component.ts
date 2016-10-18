@@ -17,7 +17,20 @@ export class CartComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.productsCart = this.productService.getProductsCart();
+    this.productsCart = this.productService.getProductsCartL();
+    
+    /*this.productService.getProductsCart()
+              .subscribe(productsCart => {
+                console.log('cart on init')
+                console.log(productsCart) 
+                this.productsCart = productsCart
+              }
+                , //Bind to view
+              err => {
+              // Log errors if any
+              console.log(err);
+              });
+      */                      
   }
 
   onProductAdded(product: ProductCart): void {
@@ -29,12 +42,29 @@ export class CartComponent implements OnInit {
     }    
 
     private addCart(product: ProductCart): void {
-        this.productService.addProductCart(product);
-        this.productsCart = this.productService.getProductsCart();
+        this.productService.addProductCartL(product);
+        this.productsCart = this.productService.getProductsCartL();
+    /*
+    this.productService.getProductsCart()
+              .subscribe(productsCart => this.productsCart = productsCart, //Bind to view
+              err => {
+              // Log errors if any
+              console.log(err);
+              });
+              */        
     }
 
     private deleteCart(product: ProductCart): void {   
         this.productService.deleteProductCart(product.id);        
-        this.productsCart = this.productService.getProductsCart();    
-    }   
+        this.productsCart = this.productService.getProductsCartL();
+    /*
+    this.productService.getProductsCart()
+              .subscribe(productsCart => this.productsCart = productsCart, //Bind to view
+              err => {
+              // Log errors if any
+              console.log(err);
+              });
+              */            
+    } 
+
 }

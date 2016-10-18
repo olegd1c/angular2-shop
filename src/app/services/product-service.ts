@@ -1,13 +1,15 @@
 import {Injectable, OnInit} from '@angular/core';
 import { Product, Review, ProductCart, Cart,IProduct} from '../app-model';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
-import {Observable}               from 'rxjs/Observable';
+import {Observable }               from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { environment } from '../../environments/environment';
 //import {Observable} from 'rxjs/Rx';
 // Import RxJs required methods
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/catch';
+
 
 
 @Injectable()
@@ -17,16 +19,29 @@ export class ProductService {
 //public cart: Cart;
 
    //private apiUrl = 'php/';
-    private apiUrl = 'php/';
+    private apiUrl = environment.uri_php;
     //
    //private apiUrl = "http://angular2-shop.devapp.in.ua/php/";//get_products.php
-   private apiUrlProduct = this.apiUrl+"get_products.php";
+   private apiUrlProduct = this.apiUrl+environment.uri_product;
+   private apiUrlToCart = this.apiUrl+environment.uri_to_cart;
+   private apiUrlGetCart = this.apiUrl+environment.uri_get_cart;
 
-   private productsCart : ProductCart[];
+   productsCart : ProductCart[];
+
     _headers:  Headers;
     constructor(private _http: Http) {
       console.log('ProductService constructor');
-
+      //this.productsCart = new Array<ProductCart>();
+      var productsCartLocal: any = localStorage.getItem('productsCart');
+      if (productsCartLocal == null) {
+        this.productsCart = new Array<ProductCart>();
+        this.setProductCarts(this.productsCart); 
+      } 
+      else{
+        this.productsCart = JSON.parse(productsCartLocal);
+      }  
+        //productsCart = []
+        /*
         this._http = _http;
         this._headers = new Headers();
         this._headers.append('Content-Type', 'application/json');
@@ -34,7 +49,7 @@ export class ProductService {
         this._headers.append("Access-Control-Allow-Origin", "http://localhost:4200");
         this._headers.append('Access-Control-Allow-Headers', 'Content-Type');
         this._headers.append('Access-Control-Allow-Methods', 'GET');
-
+        */
     }
 
   ngOnInit() {
@@ -42,6 +57,8 @@ export class ProductService {
   }
 
 
+
+/*
     getProductsP(): Promise<Product[]> {
         return this._http.get(this.apiUrlProduct)
             .toPromise()
@@ -53,24 +70,49 @@ export class ProductService {
                 )
             .catch(this.handleError);
     }
-
+*/
   getProducts1(): Product[] {
     return products.map(p => new Product(p.id, p.title, p.price, p.rating, p.description, p.categories));
   }
 
-  getProducts2() : Observable<Product[]> {
+  getProductsP() : Observable<Product[]> {
 
         // ...using get request
         return this._http.get(this.apiUrlProduct)
             // ...and calling .json() on the response to return data
-            .map((res:Response) => res.json());
+            .map((res:Response) => res.json()['products'])
             //...errors if any
-            //.catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+            .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
     }
-
+/*
   getProductsCart(): ProductCart[] 
   {     
-      return JSON.parse(localStorage.getItem('productsCart'));
+    //apiUrlGetCart
+    //return JSON.parse(localStorage.getItem('productsCart'));
+             // ...using get request
+        return this.getProductsCartServ()
+              .subscribe(productsCart => this.productsCart = productsCart, //Bind to view
+              err => {
+              // Log errors if any
+              console.log(err);
+              });                 
+  }
+*/
+  getProductsCart(): Observable<ProductCart[]> 
+  {     
+    //apiUrlGetCart
+    //return JSON.parse(localStorage.getItem('productsCart'));
+             // ...using get request
+        return this._http.get(this.apiUrlGetCart)
+            // ...and calling .json() on the response to return data
+            .map(
+              (res:Response) => {
+                console.log('ff');
+                console.log(res.json());
+                res.json()['cart']}            
+            )
+            //...errors if any
+            .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
   }
 
   setProductCarts(productsCart: ProductCart[]) 
@@ -78,8 +120,43 @@ export class ProductService {
       localStorage.setItem('productsCart',JSON.stringify(productsCart));
   } 
 
+  addProductCartL(productCart: ProductCart){
+    
+      let indexP : number = this.findProductCart(productCart.id);
+      this.productsCart = this.getProductsCartL();
+      if (indexP >= 0) {                
+        let prodCart = this.productsCart[indexP];
+        
+        console.log('addProductCart sum');
+        console.log(prodCart);  
+        let newCount = prodCart.count+1;  
+        
+        //prodCart.setCount(newCount);
+        prodCart.count = newCount;
+        prodCart.sum = prodCart.count*prodCart.price;
+
+        this.productsCart[indexP] = prodCart; 
+
+        this.setProductCarts(this.productsCart);                
+      } 
+
+      else{        
+        this.productsCart.push(productCart);
+      }
+
+    //this.productsCart.push(productCart);
+
+    this.setProductCarts(this.productsCart);    
+  }
+
+  getProductsCartL(){
+    return this.productsCart;
+  }
+
   addProductCart(productCart: ProductCart) 
   {     
+      this.add_to_cart(productCart);
+      /*
       let indexP : number = this.findProductCart(productCart.id);
       this.productsCart = this.getProductsCart();
       if (indexP >= 0) {                
@@ -101,12 +178,66 @@ export class ProductService {
       //else{        
       //  this.productsCart.push(productCart);
       //}
+      */
       
        
   } 
 
-  addProductToCart(product: Product) 
-  {     
+private extractData(res: Response) {
+  let body = res.json();
+  return body.data || { };
+}
+
+  add_to_cart (productCart: ProductCart): Observable<string> {
+    console.log('start add_to_cart');
+    //let body = JSON.stringify(productCart);//"cart";//JSON.stringify({ name });
+    /*
+    public id: number;
+    public title: string;
+    public price: number = 0;
+    public rating: number;
+    public description: string;
+    public categories: string[];
+    public count: number = 0;
+    public sum: number = 0;
+*/
+    let body = `id=${productCart.id}&title=${productCart.title}&price=${productCart.price}&rating=${productCart.rating}&description=${productCart.description}&categories=${productCart.categories}&count=${productCart.count}&sum=${productCart.sum}`;
+    //let headers = new Headers({ 'Content-Type': 'application/json' });
+    let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
+    let options = new RequestOptions({ headers: headers , method: "post"});
+
+    console.log('uri: '+this.apiUrlToCart);
+    console.log('body: '+body);
+
+     return this._http.post(this.apiUrlToCart, body, options) 
+                    .map(res => <string> res.json());
+    /*                    
+    return this._http.post(this.apiUrlToCart, body, options)
+                    .map(this.extractData)
+                    .catch((error:any) => Observable.throw(error.json().error || 'Error add to cart'));
+                    */
+
+/*
+    let body = `name=${newMail.name}&email=${newMail.email}&message=${newMail.message}`;
+    let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
+    let options = new RequestOptions({ headers: headers , method: "post"});
+
+    return this._http.post(this._contactUrl, body, options) 
+                    .map(res => <string> res.json());
+                    //.catch(this.handleError)
+*/
+
+    //console.log('end add_to_cart');                
+  }
+
+  addProductToCartL(product: Product){
+    this.addProductCartL(new ProductCart(product,1));
+  }
+
+  addProductToCart(product: Product): Observable<string>
+  {   
+    return this.add_to_cart(new ProductCart(product,1));
+    /*  
       let indexP : number = this.findProductCart(product.id);
       this.productsCart = this.getProductsCart();
       if (indexP >= 0) {
@@ -131,7 +262,8 @@ export class ProductService {
         this.setProductCarts(this.productsCart);         
       }
       
-      this.setProductCarts(this.productsCart); 
+      this.setProductCarts(this.productsCart);
+      */
   }  
 
   public setCountProduct(product: ProductCart,countP: number){
@@ -147,24 +279,28 @@ export class ProductService {
       let indexP : number = this.findProductCart(id);
   
           if (indexP >= 0){
-              this.productsCart = this.getProductsCart();            
+              this.productsCart = this.getProductsCartL();            
               this.productsCart.splice(indexP,1);
               this.setProductCarts(this.productsCart);
               //break;  
-          }      
+          }   
+             
   }  
 
+
   findProductCart( idP : number) : number{
+   
       let indexP: number = -1;
-      this.productsCart = this.getProductsCart();
+      this.productsCart = this.getProductsCartL();
       for (var i = 0; i < (this.productsCart.length); i++){        
                 if (this.productsCart[i].id == idP){
                     indexP = i;
                     break;  
                 }
             }
-    return indexP;            
+    return indexP;                
   }
+  
    
   getProductById(productId: number): Product {
     return products.find(p => p.id === productId);
@@ -180,6 +316,7 @@ export class ProductService {
     return ['Books', 'Electronics', 'Hardware'];
   }
 
+  /*
   private handleError(error: any): Promise<any> {
         console.log('Произошла ошибка', error);
         return Promise.reject(error.message || error);
@@ -228,6 +365,7 @@ export class ProductService {
                         .then(res => product)
                         .catch(this.handleError);
     }
+    */
 
 } 
 

@@ -32,12 +32,22 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     console.log('home ngOnInit');
+      /*
       this.productService.getProductsP().then(products => {
           console.log('home ngOnInit promise');
           console.log(products);
           //console.log(JSON.parse(products));
           this.products = products
       });
+      */
+
+      this.productService.getProductsP()
+        .subscribe(
+                               products => this.products = products, //Bind to view
+                                err => {
+                                    // Log errors if any
+                                    console.log(err);
+                                });      
 
       console.log('home ngOnInit end');
   }
@@ -52,13 +62,33 @@ export class HomeComponent implements OnInit {
         this.deleteCart(product);
     }    
 
-    private addCart(product: Product): void {
-        this.productService.addProductToCart(product);
+    private addCart(product: Product) {      
+        this.productService.addProductToCartL(product);
+        /*
+        this.productService.addProductToCart(product).subscribe(
+        response => this.handleResponse(response),
+        error => this.handleResponse(error)
+      );;
+      */
     }
 
     private deleteCart(product: Product): void {
         console.log('delete prod');   
         this.productService.deleteProductCart(product.id);            
     } 
+
+    handleResponse(response){
+       console.log(`msg is: {response.status}`);
+
+      if(response.status =='success'){
+        //this.message = {name: '', email: '', message: ''};
+        alert('Thank you for message');
+      }
+
+      if(response.status =='error'){
+        alert('We were unable to send your message. Try again or send the email directly. Thank you');
+      }
+      
+    }
 
 }
