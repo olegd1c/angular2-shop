@@ -1,10 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, Pipe } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule, JsonpModule } from '@angular/http';
 import { routing,
          appRoutingProviders }  from './components/application/app.routing';
-
+//import {DataTableModule} from 'angular2-datatable';
 import { AppComponent } from './components/application/app.component';
 import { CartComponent } from './components/cart/cart.component';
 import { ContactComponent } from './components/contact/contact.component';
@@ -22,6 +22,22 @@ import { Auth } from './components/auth/auth.service';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ProfileEdit } from './components/profile-edit/profile_edit.component';
 import { ProfileShow } from './components/profile-show/profile_show.component';
+import { HistoryComponent } from './components/history/history.component';
+import { OrderComponent } from './components/order/order.component';
+import {Ng2PaginationModule} from 'ng2-pagination';
+import { ProductSearchPipe } from './components/product-pipe/product-search.pipe'; // <-- import the module
+
+
+/*
+import { enableProdMode, provide, PLATFORM_PIPES } from '@angular/core';
+bootstrap(AppComponent, [
+  APP_ROUTER_PROVIDERS,
+  provide(PLATFORM_PIPES, {
+    useValue: [TimeAgoPipe],
+    multi: true
+  })
+]);
+*/
 
 @NgModule({
   declarations: [
@@ -39,14 +55,19 @@ import { ProfileShow } from './components/profile-show/profile_show.component';
     AuthComponent,
     ProfileComponent,
     ProfileEdit,
-    ProfileShow    
+    ProfileShow,
+    HistoryComponent,
+    ProductSearchPipe,
+    OrderComponent,
+        
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
     JsonpModule,
-    routing    
+    routing,
+    Ng2PaginationModule,           
   ],
   providers: [appRoutingProviders,ProductService,Auth],
   bootstrap: [AppComponent]

@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="col-md-9">
+  <h2>History Orders</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Number</th>
+        <th>Sum</th>
+        <th>Address</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders | paginate: { itemsPerPage: 10, currentPage: p }" [myTr]="order"></tr>
+    </tbody>
+  </table>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>
+</div>

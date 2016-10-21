@@ -2,5 +2,7 @@
 <div class="row">
   <div *ngFor="let product of productsCart" class="col-sm-4 col-lg-4 col-md-4">
     <app-product-cart [product] = "product" (deletedCart)="onProductDeleted($event)" (addedCart)="onProductAdded($event)"></app-product-cart>
-  </div>  
+  </div>      
 </div>
+<p [hidden] = "auth.authenticated()">authorization is necessary for the sent of the order</p>
+<button type="button" class="ui green icon button btn-success" (click)="sentCart()" [hidden] = "!auth.authenticated()" >pust order<i class="trash outline icon"></i></button>

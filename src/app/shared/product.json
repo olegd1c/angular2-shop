@@ -1,0 +1,61 @@
+{
+  "success": 1,
+  "products": [
+    {
+      "id": "1",
+      "title": "'dell 500'",
+      "description": "'\u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0434\u0435\u043b 500'",
+      "price": "200.00",
+      "rating": 3,
+      "categories": ""
+    },
+    {
+      "id": "2",
+      "title": "'dell 600'",
+      "description": "'\u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0434\u0435\u043b 600'",
+      "price": "300.00",
+      "rating": 3,
+      "categories": ""
+    },
+    {
+      "id": "3",
+      "title": "'dell 700'",
+      "description": "'\u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0434\u0435\u043b 700'",
+      "price": "400.00",
+      "rating": 3,
+      "categories": ""
+    },
+    {
+      "id": "4",
+      "title": "'dell 800'",
+      "description": "'\u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0434\u0435\u043b 800'",
+      "price": "500.00",
+      "rating": 3,
+      "categories": ""
+    },
+    {
+      "id": "5",
+      "title": "'pc100'",
+      "description": "'\u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 pc100'",
+      "price": "240.00",
+      "rating": 3,
+      "categories": ""
+    },
+    {
+      "id": "6",
+      "title": "'pc 300'",
+      "description": "'\u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 pc 300'",
+      "price": "1000.00",
+      "rating": 3,
+      "categories": ""
+    },
+    {
+      "id": "7",
+      "title": "'pc 300'",
+      "description": "'\u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 pc 300'",
+      "price": "1000.00",
+      "rating": 3,
+      "categories": ""
+    }
+  ]
+}

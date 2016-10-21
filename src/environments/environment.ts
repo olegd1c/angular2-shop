@@ -6,7 +6,7 @@
 export const environment = {
   production: false,
   uri_php: '',
-  uri_product: '',
-  uri_to_cart: '',
-  uri_get_cart:''
+  uri_product: 'app/shared/product.json',
+  uri_add_order: '',
+  uri_get_orders:'app/shared/orders.json'
 };

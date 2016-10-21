@@ -1,6 +1,6 @@
-import {Injectable, OnInit} from '@angular/core';
-import { Product, Review, ProductCart, Cart,IProduct} from '../app-model';
-import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import {EventEmitter, Injectable, OnInit } from '@angular/core';
+import { Product, Review, ProductCart, Cart,IProduct, Order, ProductSearchParams } from '../app-model';
+import { Http, Headers, RequestOptions, Response, URLSearchParams } from '@angular/http';
 import {Observable }               from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { environment } from '../../environments/environment';
@@ -14,19 +14,16 @@ import 'rxjs/add/operator/catch';
 
 @Injectable()
 export class ProductService {
-//  let productCarts: ProductCarts[];
-// let product: Product;
-//public cart: Cart;
 
-   //private apiUrl = 'php/';
-    private apiUrl = environment.uri_php;
-    //
-   //private apiUrl = "http://angular2-shop.devapp.in.ua/php/";//get_products.php
+   private apiUrl = environment.uri_php;
    private apiUrlProduct = this.apiUrl+environment.uri_product;
-   private apiUrlToCart = this.apiUrl+environment.uri_to_cart;
-   private apiUrlGetCart = this.apiUrl+environment.uri_get_cart;
+   private apiUrlAddOrder = this.apiUrl+environment.uri_add_order;
+   private apiUrlGetOrders = this.apiUrl+environment.uri_get_orders;
 
    productsCart : ProductCart[];
+   searchEvent: EventEmitter<ProductSearchParams> = new EventEmitter();
+   
+   productSearchParams : ProductSearchParams;
 
     _headers:  Headers;
     constructor(private _http: Http) {
@@ -56,7 +53,20 @@ export class ProductService {
     console.log('ProductService ngOnInit'); 
   }
 
+  //search(params: ProductSearchParams): Observable<Product[]> {
+ search(params: ProductSearchParams): Observable<any> {
+    return this._http
+      .get('/products', {search: encodeParams(params)})
+      .map(response => response.json());
+  }
 
+  getProductSearchParams(){
+    return this.productSearchParams;
+  }
+
+  setProductSearchParams(productSearchParams: ProductSearchParams){
+    this.productSearchParams = productSearchParams;
+  }
 
 /*
     getProductsP(): Promise<Product[]> {
@@ -71,7 +81,7 @@ export class ProductService {
             .catch(this.handleError);
     }
 */
-  getProducts1(): Product[] {
+  getProducts(): Product[] {
     return products.map(p => new Product(p.id, p.title, p.price, p.rating, p.description, p.categories));
   }
 
@@ -84,6 +94,16 @@ export class ProductService {
             //...errors if any
             .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
     }
+
+  getOrders() : Observable<Order[]> {
+
+        // ...using get request
+        return this._http.get(this.apiUrlGetOrders)
+            // ...and calling .json() on the response to return data
+            .map((res:Response) => res.json()['orders'])
+            //...errors if any
+            .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+    }    
 /*
   getProductsCart(): ProductCart[] 
   {     
@@ -98,6 +118,7 @@ export class ProductService {
               });                 
   }
 */
+/*
   getProductsCart(): Observable<ProductCart[]> 
   {     
     //apiUrlGetCart
@@ -114,6 +135,7 @@ export class ProductService {
             //...errors if any
             .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
   }
+  */
 
   setProductCarts(productsCart: ProductCart[]) 
   {     
@@ -153,43 +175,14 @@ export class ProductService {
     return this.productsCart;
   }
 
-  addProductCart(productCart: ProductCart) 
-  {     
-      this.add_to_cart(productCart);
-      /*
-      let indexP : number = this.findProductCart(productCart.id);
-      this.productsCart = this.getProductsCart();
-      if (indexP >= 0) {                
-        let prodCart = this.productsCart[indexP];
-        
-        console.log('addProductCart sum');
-        console.log(prodCart);  
-        let newCount = prodCart.count+1;  
-        
-        //prodCart.setCount(newCount);
-        prodCart.count = newCount;
-        prodCart.sum = prodCart.count*prodCart.price;
-
-        this.productsCart[indexP] = prodCart; 
-
-        this.setProductCarts(this.productsCart);                
-      } 
-
-      //else{        
-      //  this.productsCart.push(productCart);
-      //}
-      */
-      
-       
-  } 
 
 private extractData(res: Response) {
   let body = res.json();
   return body.data || { };
 }
 
-  add_to_cart (productCart: ProductCart): Observable<string> {
-    console.log('start add_to_cart');
+  sentCart (): Observable<string> {
+    console.log('start sentCart');
     //let body = JSON.stringify(productCart);//"cart";//JSON.stringify({ name });
     /*
     public id: number;
@@ -201,15 +194,15 @@ private extractData(res: Response) {
     public count: number = 0;
     public sum: number = 0;
 */
-    let body = `id=${productCart.id}&title=${productCart.title}&price=${productCart.price}&rating=${productCart.rating}&description=${productCart.description}&categories=${productCart.categories}&count=${productCart.count}&sum=${productCart.sum}`;
+    let body =''; 
+    //`id=${productCart.id}&title=${productCart.title}&price=${productCart.price}&rating=${productCart.rating}&description=${productCart.description}&categories=${productCart.categories}&count=${productCart.count}&sum=${productCart.sum}`;
     //let headers = new Headers({ 'Content-Type': 'application/json' });
     let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
     let options = new RequestOptions({ headers: headers , method: "post"});
 
-    console.log('uri: '+this.apiUrlToCart);
     console.log('body: '+body);
 
-     return this._http.post(this.apiUrlToCart, body, options) 
+     return this._http.post(this.apiUrlAddOrder, body, options) 
                     .map(res => <string> res.json());
     /*                    
     return this._http.post(this.apiUrlToCart, body, options)
@@ -234,38 +227,7 @@ private extractData(res: Response) {
     this.addProductCartL(new ProductCart(product,1));
   }
 
-  addProductToCart(product: Product): Observable<string>
-  {   
-    return this.add_to_cart(new ProductCart(product,1));
-    /*  
-      let indexP : number = this.findProductCart(product.id);
-      this.productsCart = this.getProductsCart();
-      if (indexP >= 0) {
-        let prodCart = this.productsCart[indexP];
-        console.log('addProductToCart sum');
-        console.log(prodCart);      
-        let newCount = prodCart.count+1;   
-        
-        //prodCart.setCount(newCount);
-        this.setCountProduct(prodCart,newCount);
-        this.productsCart[indexP] = prodCart; 
-        this.setProductCarts(this.productsCart); 
-
-      } 
-      else{
-        this.productsCart = this.getProductsCart();
-        
-        console.log('addProductToCart else');
-        console.log(product);   
-
-        this.productsCart.push(new ProductCart(product,1));
-        this.setProductCarts(this.productsCart);         
-      }
-      
-      this.setProductCarts(this.productsCart);
-      */
-  }  
-
+  
   public setCountProduct(product: ProductCart,countP: number){
       product.count = countP;
       product.sum = product.count*product.price;
@@ -368,6 +330,18 @@ private extractData(res: Response) {
     */
 
 } 
+
+/**
+ * Encodes the object into a valid query string.
+ */
+function encodeParams(params: any): URLSearchParams {
+  return Object.keys(params)
+    .filter(key => params[key])
+    .reduce((accum: URLSearchParams, key: string) => {
+      accum.append(key, params[key]);
+      return accum;
+    }, new URLSearchParams());
+}
 
 var products = [
   {

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { ProductService} from '../../services/product-service';
 import { ProductCart,Product } from '../../app-model';
+import { Auth }              from '../auth/auth.service';
 
 @Component({
   selector: 'app-cart',
@@ -12,25 +13,15 @@ export class CartComponent implements OnInit {
 
   productsCart: ProductCart[];
 
-  constructor(private productService: ProductService) {
+  constructor(private productService: ProductService, private auth: Auth) {
     this.productsCart = new Array<ProductCart>();
   }
 
   ngOnInit() {
     this.productsCart = this.productService.getProductsCartL();
-    
-    /*this.productService.getProductsCart()
-              .subscribe(productsCart => {
-                console.log('cart on init')
-                console.log(productsCart) 
-                this.productsCart = productsCart
-              }
-                , //Bind to view
-              err => {
-              // Log errors if any
-              console.log(err);
-              });
-      */                      
+    console.log("cart init");
+    console.log(this.auth.userProfile);
+    console.log(this.auth);                     
   }
 
   onProductAdded(product: ProductCart): void {
@@ -41,30 +32,18 @@ export class CartComponent implements OnInit {
         this.deleteCart(product);
     }    
 
+  private sentCart(){    
+    this.productService.sentCart();
+  }
+
     private addCart(product: ProductCart): void {
         this.productService.addProductCartL(product);
-        this.productsCart = this.productService.getProductsCartL();
-    /*
-    this.productService.getProductsCart()
-              .subscribe(productsCart => this.productsCart = productsCart, //Bind to view
-              err => {
-              // Log errors if any
-              console.log(err);
-              });
-              */        
+        this.productsCart = this.productService.getProductsCartL(); 
     }
 
     private deleteCart(product: ProductCart): void {   
         this.productService.deleteProductCart(product.id);        
-        this.productsCart = this.productService.getProductsCartL();
-    /*
-    this.productService.getProductsCart()
-              .subscribe(productsCart => this.productsCart = productsCart, //Bind to view
-              err => {
-              // Log errors if any
-              console.log(err);
-              });
-              */            
+        this.productsCart = this.productService.getProductsCartL();    
     } 
 
 }

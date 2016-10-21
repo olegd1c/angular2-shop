@@ -69,3 +69,25 @@ export class Review {
     public comment: string) {
   }
 }
+
+export class Order {
+  constructor(
+    public id: number,
+    public number: string,
+    public date: string,
+    public idCustomer: number,
+    public sum: number,
+    public address: string,
+    public status: string)    
+     {
+  }
+}
+
+export class ProductSearchParams {
+  constructor(
+      public title: string,
+      public minPrice: number,
+      public maxPrice: number)    
+      {
+    } 
+}

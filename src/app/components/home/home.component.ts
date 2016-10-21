@@ -1,28 +1,39 @@
-import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Pipe, PipeTransform } from '@angular/core';
 import { ProductService} from '../../services/product-service';
 import { Angular2ShopRoutingModule} from '../application/app.routing';
 import {Observable}               from 'rxjs/Observable';
-//import { SessionStorage } from '@angular/WebStorage'
+import { environment } from '../../../environments/environment';
+import {Product,IProduct, ProductSearchParams} from '../../app-model';
+import { ProductSearchPipe } from '../product-pipe/product-search.pipe';
+/*
+@Pipe({ name: 'minPrice',  pure: false })
+export class minPriceSearchPipe implements PipeTransform {
+transform(value: any, [price]): any {
+        return value.filter((item) => item.price < price);
+    }
+}
 
-import {Product,IProduct} from '../../app-model';
+*/
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  providers: [ProductSearchPipe]
 })
  
 export class HomeComponent implements OnInit {
   //@Output() addedCart: EventEmitter<Product>;
   //@Output() deletedCart: EventEmitter<Product>;
-
+  //minPrice: minPriceSearchPipe;
   products: Product[] = [];
-//products: Observable<Product[]>;
+  productsOb: Observable<Product[]>;
     //products: Promse<Product[]>;
   //@SessionStored
   productsCart: Product[] = new Array<Product>();
+  productSearchParams : ProductSearchParams;
 
-  constructor(private productService: ProductService) {
+  constructor(private productService: ProductService, private minPricepipe: ProductSearchPipe) {
     //this.products = this.productService.getProducts();
     //this.productsCart = new Array<Product>();
     //this.addedCart = new EventEmitter<Product>();
@@ -32,23 +43,32 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     console.log('home ngOnInit');
-      /*
-      this.productService.getProductsP().then(products => {
-          console.log('home ngOnInit promise');
-          console.log(products);
-          //console.log(JSON.parse(products));
-          this.products = products
-      });
-      */
+        this.productSearchParams = this.productService.getProductSearchParams();
+        this.productService.getProductsP()
+          .subscribe(
+                                products => this.products = products, //Bind to view
+                                  err => {
+                                      // Log errors if any
+                                      console.log(err);
+                                  });
+    //console.log(this.products);
+    //this.products = this.products.map(price => this.minPricepipe.transform(price,10000));    
 
-      this.productService.getProductsP()
-        .subscribe(
-                               products => this.products = products, //Bind to view
-                                err => {
-                                    // Log errors if any
-                                    console.log(err);
-                                });      
-
+/*
+       this.productService.searchEvent
+          .subscribe(
+        params => this.productsOb = this.productService.search(params),
+        console.error.bind(console),
+        () => console.log('DONE')
+      )
+      .subscribe(
+                                productsOb => this.products = productsOb, //Bind to view
+                                  err => {
+                                      // Log errors if any
+                                      console.log(err);
+                                  })
+      ;                             
+ */
       console.log('home ngOnInit end');
   }
 
