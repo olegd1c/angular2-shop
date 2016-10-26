@@ -78,11 +78,25 @@ export class Order {
     public idCustomer: number,
     public sum: number,
     public address: string,
-    public status: string)    
+    public status: string
+    )    
      {
   }
 }
 
+export class OrderDetails{
+  constructor(
+    public id: number,
+    public order_id: number,
+    public prod_id: number,
+    public price: number,
+    public qty: number,    
+    public sum: number,
+    public lineNumber: number)    
+     {
+  }  
+} 
+ 
 export class ProductSearchParams {
   constructor(
       public title: string,

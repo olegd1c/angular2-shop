@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import {ProductSearchParams} from '../../app-model';
 import { ProductService} from '../../services/product-service';
 
@@ -10,10 +10,14 @@ import { ProductService} from '../../services/product-service';
 export class SearchComponent implements OnInit {
   powers = ['Really Smart', 'Super Flexible',
             'Super Hot', 'Weather Changer'];
-  model = new ProductSearchParams("dd",20,1000);
+  model : ProductSearchParams;
   active = true;
+  
+  @Output() updateProducts: EventEmitter<ProductSearchParams>;
 
  constructor(private productService: ProductService ) {
+    //this.model = new ProductSearchParams("",0,0);
+  this.updateProducts = new EventEmitter<ProductSearchParams>();
 /* 
   this.signinForm = _builder.group({
         login: ['', Validators.required],
@@ -22,11 +26,14 @@ export class SearchComponent implements OnInit {
 }
 
   ngOnInit() {
-    //this.model = this.productService.getProductSearchParams();  
+    this.model = this.productService.getProductSearchParams();  
   }
-
+   
   onSubmit(){
-    console.log(this.model);
+    console.log('search onSubmit');
+    console.log(this.model);    
     this.productService.setProductSearchParams(this.model);
+    this.updateProducts.emit(this.model);
+    console.log(this.model); 
   }
 }

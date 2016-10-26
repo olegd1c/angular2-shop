@@ -25,7 +25,9 @@ import { ProfileShow } from './components/profile-show/profile_show.component';
 import { HistoryComponent } from './components/history/history.component';
 import { OrderComponent } from './components/order/order.component';
 import {Ng2PaginationModule} from 'ng2-pagination';
-import { ProductSearchPipe } from './components/product-pipe/product-search.pipe'; // <-- import the module
+import { ProductSearchPipe } from './components/product-pipe/product-search.pipe';
+import { OrderDetailsComponent } from './components/order-details/order-details.component';
+import { OrderItemComponent } from './components/order-item/order-item.component'; // <-- import the module
 
 
 /*
@@ -59,6 +61,8 @@ bootstrap(AppComponent, [
     HistoryComponent,
     ProductSearchPipe,
     OrderComponent,
+    OrderDetailsComponent,
+    OrderItemComponent,
         
   ],
   imports: [
@@ -69,7 +73,7 @@ bootstrap(AppComponent, [
     routing,
     Ng2PaginationModule,           
   ],
-  providers: [appRoutingProviders,ProductService,Auth],
+  providers: [appRoutingProviders,ProductService,Auth, ProductSearchPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

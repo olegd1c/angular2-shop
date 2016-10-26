@@ -18,8 +18,7 @@ transform(value: any, [price]): any {
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
-  providers: [ProductSearchPipe]
+  styleUrls: ['./home.component.css']
 })
  
 export class HomeComponent implements OnInit {
@@ -33,7 +32,7 @@ export class HomeComponent implements OnInit {
   productsCart: Product[] = new Array<Product>();
   productSearchParams : ProductSearchParams;
 
-  constructor(private productService: ProductService, private minPricepipe: ProductSearchPipe) {
+  constructor(private productService: ProductService, private minPricePipe: ProductSearchPipe) {
     //this.products = this.productService.getProducts();
     //this.productsCart = new Array<Product>();
     //this.addedCart = new EventEmitter<Product>();
@@ -43,7 +42,9 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     console.log('home ngOnInit');
+    
         this.productSearchParams = this.productService.getProductSearchParams();
+      console.log(this.productSearchParams);        
         this.productService.getProductsP()
           .subscribe(
                                 products => this.products = products, //Bind to view
@@ -51,8 +52,7 @@ export class HomeComponent implements OnInit {
                                       // Log errors if any
                                       console.log(err);
                                   });
-    //console.log(this.products);
-    //this.products = this.products.map(price => this.minPricepipe.transform(price,10000));    
+    //console.log(this.products);        
 
 /*
        this.productService.searchEvent
@@ -81,6 +81,11 @@ export class HomeComponent implements OnInit {
     onProductDeleted(product: Product): void {
         this.deleteCart(product);
     }    
+
+  updateProducts(){
+    console.log('home updateProducts');
+     this.products = this.minPricePipe.transform(this.products,this.productSearchParams); 
+  }
 
     private addCart(product: Product) {      
         this.productService.addProductToCartL(product);

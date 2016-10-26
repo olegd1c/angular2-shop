@@ -16,6 +16,6 @@ export class AppComponent {
   }
          
   ngOnInit() {
-    console.log('home ngOnInit');  
+    console.log('app ngOnInit');  
   }
 }

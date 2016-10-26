@@ -9,6 +9,7 @@ import { Order } from '../../app-model';
 })
 export class OrderComponent implements OnInit {
   @Input('myTr') order: Order;
+  //@Input() order: Order;
   
   constructor() { }
 

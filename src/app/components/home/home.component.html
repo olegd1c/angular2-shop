@@ -1,7 +1,16 @@
 
 <div class="row">
-  <div *ngFor="let product of products | minPrice: 1000 | paginate: { itemsPerPage: 6, currentPage: p }" class="col-sm-4 col-lg-4 col-md-4">
-    <app-product-item [product]="product" (deletedCart)="onProductDeleted($event)" (addedCart)="onProductAdded($event)"></app-product-item>
+  <div class="col-sm-3">
+    <app-search (updateProducts)="onSubmit($event)"></app-search>
   </div>
+  <div class="col-sm-9">
+    <div *ngFor="let product of products | minPrice: productSearchParams | paginate: { itemsPerPage: 6, currentPage: p }" class="col-sm-4 col-lg-4 col-md-4">
+      <app-product-item [product]="product" (deletedCart)="onProductDeleted($event)" (addedCart)="onProductAdded($event)"></app-product-item>
+    </div>
+    <div class="col-sm-9 col-lg-9 col-md-9 center">  
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    </div>    
+  </div>
+
 </div>
-<pagination-controls (pageChange)="p = $event"></pagination-controls>
+

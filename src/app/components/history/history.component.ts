@@ -15,17 +15,18 @@ export class HistoryComponent implements OnInit {
 
   orders: Order[] = [];
   constructor(private auth: Auth, private productService: ProductService) {
-      this.productService.getOrders()
+      
+  }
+
+  ngOnInit() {
+    //console.log(this.auth.userProfile.identities[0].user_id);
+    this.productService.getOrders(this.auth.userProfile.identities[0].user_id)
         .subscribe(
         orders => this.orders = orders, //Bind to view
         err => {
           // Log errors if any
           console.log(err);
         });
-  }
-
-  ngOnInit() {
-  
   }
 
 }
