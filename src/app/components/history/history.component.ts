@@ -20,7 +20,7 @@ export class HistoryComponent implements OnInit {
 
   ngOnInit() {
     //console.log(this.auth.userProfile.identities[0].user_id);
-    this.productService.getOrders(this.auth.userProfile.identities[0].user_id)
+    this.productService.getOrders(this.auth)
         .subscribe(
         orders => this.orders = orders, //Bind to view
         err => {

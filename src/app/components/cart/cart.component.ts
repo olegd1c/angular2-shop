@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { ProductService} from '../../services/product-service';
-import { ProductCart,Product } from '../../app-model';
+import { ProductCart,Product, CartContainer } from '../../app-model';
 import { Auth }              from '../auth/auth.service';
 
 @Component({
@@ -32,8 +32,28 @@ export class CartComponent implements OnInit {
         this.deleteCart(product);
     }    
 
-  private sentCart(){    
-    this.productService.sentCart();
+  private sentCart(){  
+    this.productService.sentCart(this.auth)
+      .subscribe(
+        res => 
+          {
+            console.log("sentCart subscribe");
+//            console.log(res);
+
+            if(res.status = 200 && res.json.success == 1){
+              console.log("sentCart subscribe ok");
+              this.productService.clearProductCarts();
+              this.productsCart = this.productService.getProductsCartL();
+              console.log("this.productsCart");
+              console.log(this.productsCart);
+            }
+          } , 
+
+        err => {
+          // Log errors if any
+          console.log(err);
+        });      
+    ;
   }
 
     private addCart(product: ProductCart): void {

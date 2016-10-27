@@ -44,7 +44,8 @@ export class HomeComponent implements OnInit {
     console.log('home ngOnInit');
     
         this.productSearchParams = this.productService.getProductSearchParams();
-      console.log(this.productSearchParams);        
+      
+        //console.log(this.productSearchParams);        
         this.productService.getProductsP()
           .subscribe(
                                 products => this.products = products, //Bind to view

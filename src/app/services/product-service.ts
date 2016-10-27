@@ -1,9 +1,10 @@
 import {EventEmitter, Injectable, OnInit } from '@angular/core';
-import { Product, Review, ProductCart, Cart, IProduct, Order, OrderDetails, ProductSearchParams } from '../app-model';
-import { Http, Headers, RequestOptions, Response, URLSearchParams } from '@angular/http';
-import {Observable }               from 'rxjs/Observable';
+import { Product, Review, ProductCart, Cart, IProduct, Order, OrderDetails, ProductSearchParams, CartContainer, OrderDetail } from '../app-model';
+import { Http, Headers, RequestOptions, Response, URLSearchParams, RequestMethod, Request } from '@angular/http';
+import { Observable }               from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { environment } from '../../environments/environment';
+import { Auth }              from '../components/auth/auth.service';
 //import {Observable} from 'rxjs/Rx';
 // Import RxJs required methods
 import 'rxjs/add/operator/map';
@@ -20,22 +21,31 @@ export class ProductService {
   private apiUrlGetOrdersDetails = this.apiUrl + environment.uri_get_order_details;
   productsCart: ProductCart[];
   searchEvent: EventEmitter<ProductSearchParams> = new EventEmitter();
-
+  idCustomer: number;
+  addressCustomer: string;
   productSearchParams: ProductSearchParams;
   orders: Order[];
 
   _headers: Headers;
   constructor(private _http: Http) {
     console.log('ProductService constructor');
+    this.addressCustomer = "Киев, Заболотного,158";
     //this.productsCart = new Array<ProductCart>();
-    //this.productSearchParams = new ProductSearchParams("",0,0);
+    //this.productSearchParams = new ProductSearchParams("",0,0);    
     var productsCartLocal: any = localStorage.getItem('productsCart');
     if (productsCartLocal == null) {
       this.productsCart = new Array<ProductCart>();
       this.setProductCarts(this.productsCart);
+      console.log("this.productsCart null");
+      console.log(this.productsCart);
     }
     else {
+      console.log("productsCartLocal");
+      console.log(productsCartLocal);
+
       this.productsCart = JSON.parse(productsCartLocal);
+      console.log("this.productsCart not null");
+      console.log(this.productsCart);
     }
 
     var productSearchLocal: any = localStorage.getItem('productSearch');
@@ -105,8 +115,8 @@ export class ProductService {
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
 
-  getOrders(user_id: string): Observable<Order[]> {
-
+  getOrders(auth: Auth): Observable<Order[]> {
+    let user_id = this.getUserId(auth);
     // ...using get request
     let uri_order = this.apiUrlGetOrders + '?user_id=' + user_id;
     //console.log("uri_order: "+uri_order);
@@ -185,13 +195,20 @@ export class ProductService {
     }
     */
 
+  clearProductCarts(){
+    this.setProductCarts(new Array<ProductCart>());  
+  }  
   setProductCarts(productsCart: ProductCart[]) {
-    localStorage.setItem('productsCart', JSON.stringify(productsCart));
+    this.productsCart = productsCart;
+    localStorage.setItem('productsCart', JSON.stringify(this.productsCart));
   }
 
   addProductCartL(productCart: ProductCart) {
     this.productsCart = this.getProductsCartL();
     let indexP: number = this.findObjInArray(productCart.id, this.productsCart);
+
+    console.log("this.productsCart");
+    console.log(this.productsCart);
 
     if (indexP >= 0) {
       let prodCart = this.productsCart[indexP];
@@ -212,7 +229,8 @@ export class ProductService {
     else {
       this.productsCart.push(productCart);
     }
-
+    console.log("this.productsCart");
+    console.log(this.productsCart);
     //this.productsCart.push(productCart);
 
     this.setProductCarts(this.productsCart);
@@ -222,15 +240,61 @@ export class ProductService {
     return this.productsCart;
   }
 
-
   private extractData(res: Response) {
     let body = res.json();
     return body.data || {};
   }
 
-  sentCart(): Observable<string> {
+  getUserId(auth: Auth): string {
+    return auth.userProfile.identities[0].user_id;
+  }
+
+  sentCart(auth: Auth): any {
     console.log('start sentCart');
-    //let body = JSON.stringify(productCart);//"cart";//JSON.stringify({ name });
+    let totalSum: number = 0;
+    let orderDetails: OrderDetail[] = new Array();
+    let userId: string = this.getUserId(auth);
+
+    for (var i = 0; i < (this.productsCart.length); i++) {
+      let prod = this.productsCart[i];
+      totalSum = totalSum + prod.sum;
+      let ordDet: OrderDetail = new OrderDetail(prod.product.id, prod.count, prod.price, prod.sum);
+      orderDetails.push(ordDet);
+    }
+
+    let cartContainer = new CartContainer(userId, totalSum, this.addressCustomer, orderDetails);
+    console.log(JSON.stringify(cartContainer));
+    let body = JSON.stringify(cartContainer);//"cart";//JSON.stringify({ name });
+    
+
+    ////////////////////////////////////////
+       //var headers = new Headers(), 
+       //authtoken = localStorage.getItem('authtoken');
+       let headers = new Headers({ 'Content-Type': 'application/json' });
+       //headers.append("Content-Type", 'application/json');
+
+        //if (authtoken) {
+        //headers.append("Authorization", 'Token ' + authtoken)
+        //}
+        headers.append("Accept", 'application/json');
+
+        var requestoptions = new RequestOptions({
+            method: RequestMethod.Post,
+            url: this.apiUrlAddOrder,
+            headers: headers,
+            body: JSON.stringify(cartContainer)
+        });
+
+        return this._http.request(new Request(requestoptions))
+        .map((res: Response) => {
+            console.log("sentCart map");
+            console.log(res);
+            if (res) {
+                return { status: res.status, json: res.json() }
+            }
+        });
+    ////////////////////////////////////////
+    
     /*
     public id: number;
     public title: string;
@@ -241,16 +305,27 @@ export class ProductService {
     public count: number = 0;
     public sum: number = 0;
 */
-    let body = '';
+    //let body = '';
     //`id=${productCart.id}&title=${productCart.title}&price=${productCart.price}&rating=${productCart.rating}&description=${productCart.description}&categories=${productCart.categories}&count=${productCart.count}&sum=${productCart.sum}`;
     //let headers = new Headers({ 'Content-Type': 'application/json' });
+    
+    /*
     let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
     let options = new RequestOptions({ headers: headers, method: "post" });
 
-    console.log('body: ' + body);
-
     return this._http.post(this.apiUrlAddOrder, body, options)
-      .map(res => <string>res.json());
+      .map(res => 
+      {
+        console.log("sentCart map");
+        console.log(res);
+        console.log(<string>res.json());
+      return <string>res.json();
+      }
+      )
+      .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+      
+    ;
+    */
     /*                    
     return this._http.post(this.apiUrlToCart, body, options)
                     .map(this.extractData)
@@ -400,6 +475,28 @@ function encodeParams(params: any): URLSearchParams {
       accum.append(key, params[key]);
       return accum;
     }, new URLSearchParams());
+}
+
+function allStorage() {
+  var i;
+
+  console.log("local storage");
+  for (i = 0; i < localStorage.length; i++) {
+    console.log(localStorage.key(i) + "=[" + localStorage.getItem(localStorage.key(i)) + "]");
+  }
+
+  console.log("session storage");
+  for (i = 0; i < sessionStorage.length; i++) {
+    console.log(sessionStorage.key(i) + "=[" + sessionStorage.getItem(sessionStorage.key(i)) + "]");
+  }
+
+  //var archive = [];
+  /*
+  for (var i = 0; i<localStorage.length; i++) {
+      console.log(localStorage.key(i));
+      console.log(localStorage.getItem(localStorage.key(i)));
+      //archive[i] = localStorage.getItem(localStorage.key(i));
+  }*/
 }
 
 var products = [
