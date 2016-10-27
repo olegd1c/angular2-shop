@@ -7,7 +7,7 @@
             "idCustomer": "1",
             "sum": "1500.00",
             "number": "43",
-            "adress": "ff",
+            "address": "ff",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -16,7 +16,7 @@
             "idCustomer": "1",
             "sum": "500.00",
             "number": "42",
-            "adress": "ff",
+            "address": "ff",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -25,7 +25,7 @@
             "idCustomer": "1",
             "sum": "900.00",
             "number": "44",
-            "adress": "gg",
+            "address": "gg",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -34,7 +34,7 @@
             "idCustomer": "1",
             "sum": "900.00",
             "number": "45",
-            "adress": "hh",
+            "address": "hh",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -43,7 +43,7 @@
             "idCustomer": "1",
             "sum": "1500.00",
             "number": "46",
-            "adress": "jj",
+            "address": "jj",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -52,7 +52,7 @@
             "idCustomer": "1",
             "sum": "1500.00",
             "number": "47",
-            "adress": "kk",
+            "address": "kk",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -61,7 +61,7 @@
             "idCustomer": "1",
             "sum": "600.00",
             "number": "48",
-            "adress": "ll",
+            "address": "ll",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -70,7 +70,7 @@
             "idCustomer": "1",
             "sum": "300.00",
             "number": "49",
-            "adress": "ss",
+            "address": "ss",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -79,7 +79,7 @@
             "idCustomer": "1",
             "sum": "500.00",
             "number": "50",
-            "adress": "dd",
+            "address": "dd",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -88,7 +88,7 @@
             "idCustomer": "1",
             "sum": "500.00",
             "number": "51",
-            "adress": "ff",
+            "address": "ff",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -97,7 +97,7 @@
             "idCustomer": "1",
             "sum": "500.00",
             "number": "52",
-            "adress": "qq",
+            "address": "qq",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -106,7 +106,7 @@
             "idCustomer": "1",
             "sum": "4000.00",
             "number": "53",
-            "adress": "ww",
+            "address": "ww",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -115,7 +115,7 @@
             "idCustomer": "1",
             "sum": "200.00",
             "number": "54",
-            "adress": "ee",
+            "address": "ee",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -124,7 +124,7 @@
             "idCustomer": "1",
             "sum": "900.00",
             "number": "55",
-            "adress": "dd",
+            "address": "dd",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -133,7 +133,7 @@
             "idCustomer": "1",
             "sum": "1200.00",
             "number": "56",
-            "adress": "gg",
+            "address": "gg",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -142,7 +142,7 @@
             "idCustomer": "1",
             "sum": "500.00",
             "number": "57",
-            "adress": "ff",
+            "address": "ff",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -151,7 +151,7 @@
             "idCustomer": "1",
             "sum": "500.00",
             "number": "58",
-            "adress": "ff",
+            "address": "ff",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -160,7 +160,7 @@
             "idCustomer": "1",
             "sum": "600.00",
             "number": "59",
-            "adress": "ff",
+            "address": "ff",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -169,7 +169,7 @@
             "idCustomer": "1",
             "sum": "0.00",
             "number": "60",
-            "adress": "ff",
+            "address": "ff",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         },
         {
@@ -178,7 +178,7 @@
             "idCustomer": "1",
             "sum": "200.00",
             "number": "61",
-            "adress": "ff",
+            "address": "ff",
             "status": "\u043d\u043e\u0432\u044b\u0439"
         }
     ]

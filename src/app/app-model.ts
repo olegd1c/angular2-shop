@@ -73,8 +73,8 @@ export class Review {
 export class Order {
   constructor(
     public id: number,
-    public number: string,
     public date: string,
+    public number: string,    
     public idCustomer: number,
     public sum: number,
     public address: string,
@@ -117,7 +117,7 @@ export class CartContainer {
   constructor(
     public userId: string,
     public totalSum: number,
-    public adress: string,
+    public address: string,
     public orderDetails: OrderDetail[]
   ) {
   }
