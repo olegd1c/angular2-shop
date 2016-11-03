@@ -1,8 +1,34 @@
+<div class="container">
+  <form class="form-horizontal span3 tweaked-margin" id="contact-form" (ngSubmit)="onSubmit()" #tkdForm="ngForm">
+    <!---->
 
-<div class="row">
-  <div *ngFor="let product of productsCart" class="col-sm-4 col-lg-4 col-md-4">
-    <app-product-cart [product] = "product" (deletedCart)="onProductDeleted($event)" (addedCart)="onProductAdded($event)"></app-product-cart>
-  </div>      
+    <div class="control-group ">
+      <label class="control-label" for="address">Address</label>
+      <div class="controls">
+        <input type="address" name="address" id="address" placeholder="Your delivery address" [(ngModel)]="message.address" ngControl="address"
+          class="form-control input-lg " required aria-required=”true”>
+        <!-- #tkdForm.email="ngForm" -->
+      </div>
+
+    </div>
+    <!--
+  <div class="form-actions" >   [hidden] ="!tkdForm.form.valid" 
+    <button type="submit" [disabled]  ="!tkdForm.form.valid" class="btn btn-default btn-lg btn-block">Send message</button>
+  </div>
+  -->
+
+    <label class="control-label">Cart</label>
+    <div class="row">
+      <div *ngFor="let product of productsCart" class="col-sm-4 col-lg-4 col-md-4">
+        <app-product-cart [product]="product" (deletedCart)="onProductDeleted($event)" (addedCart)="onProductAdded($event)"></app-product-cart>
+      </div>
+    </div>
+
+    <p [hidden]="auth.authenticated()">authorization is necessary for the sent of the order</p>
+    <button type="button" [disabled]="!tkdForm.form.valid" class="ui icon button btn-success" [hidden]="!auth.authenticated() || productsCart.length<=0"
+      (click)="sentCart()">pust order<i class="trash outline icon"></i>
+    </button>
+
+    <!-- *ngIf="!tkdForm.form.valid" class="ui green icon button btn-default" -->
+  </form>
 </div>
-<p [hidden] = "auth.authenticated()">authorization is necessary for the sent of the order</p>
-<button type="button" class="ui green icon button btn-success" (click)="sentCart()" [hidden] = "!auth.authenticated()" >pust order<i class="trash outline icon"></i></button>

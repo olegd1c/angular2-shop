@@ -1,5 +1,6 @@
 import {EventEmitter, Injectable, OnInit } from '@angular/core';
-import { Product, Review, ProductCart, Cart, IProduct, Order, OrderDetails, ProductSearchParams, CartContainer, OrderDetail } from '../app-model';
+import { Product, Review, ProductCart, Cart, IProduct, Order, OrderDetails, ProductSearchParams, CartContainer,ICartContainer,
+  OrderDetail, Customer } from '../app-model';
 import { Http, Headers, RequestOptions, Response, URLSearchParams, RequestMethod, Request } from '@angular/http';
 import { Observable }               from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -19,12 +20,16 @@ export class ProductService {
   private apiUrlAddOrder = this.apiUrl + environment.uri_add_order;
   private apiUrlGetOrders = this.apiUrl + environment.uri_get_orders;
   private apiUrlGetOrdersDetails = this.apiUrl + environment.uri_get_order_details;
+  private apiUrlGetAddCustomer = this.apiUrl + environment.uri_get_add_customer;
+
   productsCart: ProductCart[];
   searchEvent: EventEmitter<ProductSearchParams> = new EventEmitter();
   idCustomer: number;
   addressCustomer: string;
   productSearchParams: ProductSearchParams;
   orders: Order[];
+
+  customer: Customer;
 
   _headers: Headers;
   constructor(private _http: Http) {
@@ -117,6 +122,9 @@ export class ProductService {
 
   getOrders(auth: Auth): Observable<Order[]> {
     let user_id = this.getUserId(auth);
+    if (user_id.length ==0){
+        return null;
+    }
     // ...using get request
     let uri_order = this.apiUrlGetOrders + '?user_id=' + user_id;
     //console.log("uri_order: "+uri_order);
@@ -195,9 +203,9 @@ export class ProductService {
     }
     */
 
-  clearProductCarts(){
-    this.setProductCarts(new Array<ProductCart>());  
-  }  
+  clearProductCarts() {
+    this.setProductCarts(new Array<ProductCart>());
+  }
   setProductCarts(productsCart: ProductCart[]) {
     this.productsCart = productsCart;
     localStorage.setItem('productsCart', JSON.stringify(this.productsCart));
@@ -244,12 +252,104 @@ export class ProductService {
     let body = res.json();
     return body.data || {};
   }
-
-  getUserId(auth: Auth): string {
-    return auth.userProfile.identities[0].user_id;
+/*
+ getAddCustomer(auth: Auth) {
+    console.log("auth");
+    console.log(auth);    
+    this.sentRecCustomer(auth).subscribe(
+      res => {
+        console.log("getAddCustomer subscribe");      
+        if (res.status = 200 && res.json.success == 1) {
+          console.log(res.json);            
+          this.customer = JSON.parse(res.json.customer);
+          console.log("this.customer");
+          console.log(this.customer);
+        }
+      },
+      err => {
+        // Log errors if any
+        console.log(err);
+      });
+    ;
+  }
+*/
+  getCustomerFromAuth(auth: Auth): Customer{
+    let customerRec = new Customer("","", "", "", "", "", "");
+    if (auth !=null){
+      customerRec.name = auth.userProfile.given_name;
+      customerRec.s_name = auth.userProfile.family_name;
+      customerRec.user_id = auth.userProfile.user_id;
+      customerRec.email = auth.userProfile.email;      
+    }
+    return customerRec;  
   }
 
-  sentCart(auth: Auth): any {
+  sentRecCustomer(auth: Auth): any {
+    console.log("sentRecCustomer");
+    console.log(auth);      
+    
+    let customer = this.getCustomerFromAuth(auth);
+    /*
+    customer.email = auth.userProfile.email;
+    customer.name = auth.userProfile.given_name;
+    customer.s_name = auth.userProfile.family_name;
+    customer.address = auth.userProfile.user_metadata.address;    
+    */
+    console.log("sentRecCustomer customer");
+    console.log(customer);
+
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    headers.append("Accept", 'application/json');
+
+    var requestoptions = new RequestOptions({
+      method: RequestMethod.Post,
+      url: this.apiUrlGetAddCustomer,
+      headers: headers,
+      body: JSON.stringify(customer)
+    });
+
+    return this._http.request(new Request(requestoptions))
+      .map((res: Response) => {
+        console.log("sentRecCustomer map");
+        console.log(res);
+        if (res) {
+          return { status: res.status, json: res.json()}
+        }
+      });
+  }
+
+  getUserId(auth: Auth): string {
+    let user_id = "";
+    if (auth !=null && auth.authenticated()) {
+      user_id = auth.userProfile.user_id;
+    }
+    console.log("authenticated: " + auth.authenticated());
+    console.log("user_id: " + user_id);
+    return user_id;
+    //return auth.userProfile.identities[0].user_id;
+  }
+
+  getUserProvider(auth: Auth): string {
+    return auth.userProfile.identities[0].provide;
+  }
+/*
+  getCustomer(auth:Auth): Customer {
+    console.log("getCustomer start");
+    if (this.customer == null){
+      console.log("getCustomer get");
+      this.getAddCustomer(auth);
+    }  
+
+    return this.customer;
+    //return auth.userProfile.identities[0].user_id;
+  }
+  */
+
+  setCustomer(customer: Customer): Customer {
+    return this.customer = customer;
+  }
+
+  sentCart(auth: Auth, message:CartContainer): any {
     console.log('start sentCart');
     let totalSum: number = 0;
     let orderDetails: OrderDetail[] = new Array();
@@ -262,39 +362,39 @@ export class ProductService {
       orderDetails.push(ordDet);
     }
 
-    let cartContainer = new CartContainer(userId, totalSum, this.addressCustomer, orderDetails);
+    let cartContainer = new CartContainer(userId, totalSum, message.address, orderDetails);
     console.log(JSON.stringify(cartContainer));
     let body = JSON.stringify(cartContainer);//"cart";//JSON.stringify({ name });
-    
+
 
     ////////////////////////////////////////
-       //var headers = new Headers(), 
-       //authtoken = localStorage.getItem('authtoken');
-       let headers = new Headers({ 'Content-Type': 'application/json' });
-       //headers.append("Content-Type", 'application/json');
+    //var headers = new Headers(), 
+    //authtoken = localStorage.getItem('authtoken');
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    //headers.append("Content-Type", 'application/json');
 
-        //if (authtoken) {
-        //headers.append("Authorization", 'Token ' + authtoken)
-        //}
-        headers.append("Accept", 'application/json');
+    //if (authtoken) {
+    //headers.append("Authorization", 'Token ' + authtoken)
+    //}
+    headers.append("Accept", 'application/json');
 
-        var requestoptions = new RequestOptions({
-            method: RequestMethod.Post,
-            url: this.apiUrlAddOrder,
-            headers: headers,
-            body: JSON.stringify(cartContainer)
-        });
+    var requestoptions = new RequestOptions({
+      method: RequestMethod.Post,
+      url: this.apiUrlAddOrder,
+      headers: headers,
+      body: JSON.stringify(cartContainer)
+    });
 
-        return this._http.request(new Request(requestoptions))
-        .map((res: Response) => {
-            console.log("sentCart map");
-            console.log(res);
-            if (res) {
-                return { status: res.status, json: res.json() }
-            }
-        });
+    return this._http.request(new Request(requestoptions))
+      .map((res: Response) => {
+        console.log("sentCart map");
+        console.log(res);
+        if (res) {
+          return { status: res.status, json: res.json() }
+        }
+      });
     ////////////////////////////////////////
-    
+
     /*
     public id: number;
     public title: string;
@@ -308,7 +408,7 @@ export class ProductService {
     //let body = '';
     //`id=${productCart.id}&title=${productCart.title}&price=${productCart.price}&rating=${productCart.rating}&description=${productCart.description}&categories=${productCart.categories}&count=${productCart.count}&sum=${productCart.sum}`;
     //let headers = new Headers({ 'Content-Type': 'application/json' });
-    
+
     /*
     let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
     let options = new RequestOptions({ headers: headers, method: "post" });

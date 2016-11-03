@@ -9,5 +9,6 @@ export const environment = {
   uri_product: 'app/shared/product.json',
   uri_add_order: '',
   uri_get_orders:'app/shared/orders.json',
-  uri_get_order_details:'app/shared/order_details.json'  
+  uri_get_order_details:'app/shared/order_details.json',
+  uri_get_add_customer:''  
 };

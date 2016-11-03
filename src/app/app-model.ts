@@ -122,3 +122,23 @@ export class CartContainer {
   ) {
   }
 }
+
+export class Customer {
+  constructor(
+    public id: string,
+    public user_id: string,
+    public name: string,
+    public s_name: string,    
+    public address: string,
+    public email: string,
+    public phone: string
+  ) {
+  }
+}
+
+export interface ICartContainer {
+  userId: string;
+  totalSum: number;
+  address: string;
+  orderDetails: OrderDetail[];
+}

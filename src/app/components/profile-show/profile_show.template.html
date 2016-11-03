@@ -9,6 +9,11 @@
       <p><strong>Created At: </strong> {{auth.userProfile.created_at}}</p>
       <p><strong>Updated At: </strong> {{auth.userProfile.updated_at}}</p>
       <p><strong>Address: </strong> {{auth.userProfile.user_metadata.address}}</p>
+      <p></p>
+      <p><strong>ID customer: </strong> {{customer.id}}</p>
+      <p><strong>ID Address: </strong> {{customer.address}}</p>
+      <p><strong>ID user_id: </strong> {{customer.user_id}}</p>  
+      <p><strong>ID phone: </strong> {{customer.phone}}</p>           
     </div>
   </div>
   <button class="btn btn-primary btn-margin" [routerLink]="['/profile/edit']">Edit address</button>

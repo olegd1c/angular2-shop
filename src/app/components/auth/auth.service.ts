@@ -1,6 +1,7 @@
 import { Injectable }      from '@angular/core';
 import { tokenNotExpired } from 'angular2-jwt';
 import { myConfig }        from './auth.config';
+import { ProductService} from '../../services/product-service';
 
 // Avoid name not found warnings
 declare var Auth0Lock: any;
@@ -22,11 +23,11 @@ export class Auth {
 
   //Store profile object in auth class
   userProfile: any;
-
-  constructor() {
+  //productService:ProductService;
+  constructor(productService:ProductService) {
     // Set userProfile attribute if already saved profile
     this.userProfile = JSON.parse(localStorage.getItem('profile'));
-
+    //this.productService = productService;
     // Add callback for lock `authenticated` event
     this.lock.on("authenticated", (authResult) => {
       localStorage.setItem('id_token', authResult.idToken);
@@ -42,13 +43,13 @@ export class Auth {
         profile.user_metadata = profile.user_metadata || {};
         localStorage.setItem('profile', JSON.stringify(profile));
         this.userProfile = profile;
-      });
-    });
+      });      
+    });    
   };
 
   public login() {
     // Call the show method to display the widget.
-    this.lock.show();
+    this.lock.show();        
   };
 
   public authenticated() {
