@@ -1,5 +1,5 @@
 <div class="container">
-  <form class="form-horizontal span3 tweaked-margin" id="contact-form" (ngSubmit)="onSubmit()" #tkdForm="ngForm">
+  <form [hidden]="!auth.authenticated() || productsCart.length<=0" class="form-horizontal" id="contact-form" (ngSubmit)="onSubmit()" #tkdForm="ngForm">
     <!---->
 
     <div class="control-group ">
